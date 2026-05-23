@@ -25,29 +25,23 @@ CLAUDE_MODEL = "claude-haiku-4-5-20251001"
 LOOKBACK_DAYS          = 1    # days to look back for new papers
 MAX_PAPERS_PER_JOURNAL = 5    # cap per journal per run
 
-# ── UTD24 Journals (Marketing + IS + Management) ──────────────────────────────
+# ── UTD24 Journals — Marketing + IS + Management ──────────────────────────────
+# Source: UT Dallas Top 100 Business School Research Rankings
+# https://jindal.utdallas.edu/the-utd-top-100-business-school-research-rankings/
 UTD24_JOURNALS = [
-    # Marketing Management
-    {"name": "Journal of Marketing",                         "issn": "0022-2429", "category": "Marketing Management", "short": "JM"},
-    {"name": "Journal of Marketing Research",                "issn": "0022-2437", "category": "Marketing Management", "short": "JMR"},
-    {"name": "Journal of Consumer Research",                 "issn": "0093-5301", "category": "Marketing Management", "short": "JCR"},
-    {"name": "Marketing Science",                            "issn": "0732-2399", "category": "Marketing Management", "short": "Mktg Sci"},
-    {"name": "Journal of the Academy of Marketing Science",  "issn": "0092-0703", "category": "Marketing Management", "short": "JAMS"},
-    # Information Science
-    {"name": "MIS Quarterly",                                "issn": "0276-7783", "category": "Information Science",  "short": "MISQ"},
-    {"name": "Information Systems Research",                 "issn": "1047-7047", "category": "Information Science",  "short": "ISR"},
-    {"name": "Journal of Management Information Systems",    "issn": "0742-1222", "category": "Information Science",  "short": "JMIS"},
-    {"name": "Journal of Information Technology",            "issn": "0268-3962", "category": "Information Science",  "short": "JIT"},
-    # Management
-    {"name": "Management Science",                           "issn": "0025-1909", "category": "Management",           "short": "Mgmt Sci"},
-    {"name": "Academy of Management Journal",                "issn": "0001-4273", "category": "Management",           "short": "AMJ"},
-    {"name": "Academy of Management Review",                 "issn": "0363-7425", "category": "Management",           "short": "AMR"},
-    {"name": "Administrative Science Quarterly",             "issn": "0001-8392", "category": "Management",           "short": "ASQ"},
-    {"name": "Strategic Management Journal",                 "issn": "0143-2095", "category": "Management",           "short": "SMJ"},
-    {"name": "Organization Science",                         "issn": "1047-7039", "category": "Management",           "short": "Org Sci"},
-    {"name": "Journal of International Business Studies",    "issn": "0047-2506", "category": "Management",           "short": "JIBS"},
-    {"name": "Journal of Management",                        "issn": "0149-2063", "category": "Management",           "short": "JOM"},
-    {"name": "Journal of Management Studies",                "issn": "0022-2380", "category": "Management",           "short": "JMS"},
-    {"name": "Organizational Behavior and Human Decision Processes", "issn": "0749-5978", "category": "Management",  "short": "OBHDP"},
-    {"name": "Journal of Applied Psychology",                "issn": "0021-9010", "category": "Management",           "short": "JAP"},
+    # Marketing (4 journals)
+    {"name": "Journal of Marketing",        "issn": "0022-2429", "category": "Marketing", "short": "JM"},
+    {"name": "Journal of Marketing Research","issn": "0022-2437", "category": "Marketing", "short": "JMR"},
+    {"name": "Journal of Consumer Research", "issn": "0093-5301", "category": "Marketing", "short": "JCR"},
+    {"name": "Marketing Science",            "issn": "0732-2399", "category": "Marketing", "short": "Mktg Sci"},
+    # Information Systems (2 journals)
+    {"name": "MIS Quarterly",               "issn": "0276-7783", "category": "Information Systems", "short": "MISQ"},
+    {"name": "Information Systems Research", "issn": "1047-7047", "category": "Information Systems", "short": "ISR"},
+    # Management (6 journals)
+    {"name": "Academy of Management Journal","issn": "0001-4273", "category": "Management", "short": "AMJ"},
+    {"name": "Academy of Management Review", "issn": "0363-7425", "category": "Management", "short": "AMR"},
+    {"name": "Administrative Science Quarterly","issn": "0001-8392","category": "Management","short": "ASQ"},
+    {"name": "Management Science",           "issn": "0025-1909", "category": "Management", "short": "Mgmt Sci"},
+    {"name": "Organization Science",         "issn": "1047-7039", "category": "Management", "short": "Org Sci"},
+    {"name": "Strategic Management Journal", "issn": "0143-2095", "category": "Management", "short": "SMJ"},
 ]
