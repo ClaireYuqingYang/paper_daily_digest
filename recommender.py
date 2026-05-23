@@ -84,6 +84,22 @@ def pick_paper(papers: list[dict]) -> dict | None:
     return result[0] if result else None
 
 
+def pick_extra_papers(papers: list[dict], already_picked: list[dict], n: int = 5) -> list[dict]:
+    """
+    Pick n additional 'you might like' papers, excluding already_picked.
+    Ranked by interest score, no randomness (these are bonus recommendations).
+    """
+    picked_dois = {p["doi"] for p in already_picked}
+    remaining = [p for p in papers if p["doi"] not in picked_dois]
+    if not remaining:
+        return []
+    interests = _load_interests()
+    if not interests:
+        return remaining[:n]
+    scored = sorted(remaining, key=lambda p: _score(p, interests), reverse=True)
+    return scored[:n]
+
+
 def top_papers_for_issue(papers: list[dict], n: int = 3) -> list[dict]:
     """
     For a new issue announcement, return the n most interesting papers

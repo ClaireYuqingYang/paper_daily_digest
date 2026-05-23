@@ -45,39 +45,54 @@ def _send(title: str, content: str) -> bool:
 
 # ── 每日论文推荐（3篇打包成1条消息）─────────────────────────────────────────────
 
-def send_daily_digest(papers: list[dict]) -> bool:
-    """Send all today's picks in a single Server酱 message (saves quota)."""
+def send_daily_digest(featured: list[dict], extra: list[dict] = None) -> bool:
+    """
+    Send the full daily digest in one Server酱 message:
+      - featured: 3 papers with Chinese abstract snippet + Telegraph link
+      - extra:    5 papers with Chinese title only + DOI link
+    """
     today = date.today().strftime("%Y年%m月%d日")
-    title = f"📚 今日论文推荐 · {today}（{len(papers)} 篇）"
+    extra = extra or []
+    title = f"📚 今日论文推荐 · {today}"
 
-    sections = []
-    for i, paper in enumerate(papers):
-        label   = "🎯 与你相关" if i < 2 else "🎲 随机漫步"
-        journal = f"{paper['journal_short']}"
+    # ── Section 1: Featured 3 ──────────────────────────────────────────────────
+    featured_blocks = []
+    for i, paper in enumerate(featured):
+        label   = "🎯 精选" if i < 2 else "🎲 随机"
+        journal = paper["journal_short"]
         authors = "、".join(paper.get("authors", [])[:2])
         if len(paper.get("authors", [])) > 2:
             authors += " et al."
         link    = paper.get("telegraph_url") or paper.get("url", "")
-        abstract_zh = paper.get("abstract_zh", "").strip()
-        # Keep abstract short in the WeChat message — full version is on Telegraph
-        snippet = abstract_zh[:120] + "…" if len(abstract_zh) > 120 else abstract_zh
+        snippet = paper.get("abstract_zh", "").strip()[:150]
+        if len(paper.get("abstract_zh", "")) > 150:
+            snippet += "…"
 
-        sections.append(f"""---
-**{label} · {journal}**
-**{paper['title']}**
-*{authors} · {paper.get('pub_date', '')}*
+        featured_blocks.append(
+            f"**[{label}] {paper['title']}**\n"
+            f"*{journal} · {authors} · {paper.get('pub_date', '')}*\n\n"
+            f"{snippet}\n\n"
+            f"[👉 读完整解读]({link})"
+        )
 
-{snippet}
+    # ── Section 2: Extra 5 (title only) ───────────────────────────────────────
+    extra_lines = []
+    for paper in extra:
+        title_zh = paper.get("title_zh", paper["title"])
+        link     = paper.get("url", "")
+        journal  = paper["journal_short"]
+        extra_lines.append(f"- [{title_zh}]({link}) *{journal}*")
 
-[👉 读全文]({link})""")
+    content = "\n\n---\n\n".join(featured_blocks)
+    if extra_lines:
+        content += "\n\n---\n\n**📋 你可能感兴趣**\n\n" + "\n".join(extra_lines)
 
-    content = "\n\n".join(sections)
-    print(f"推送今日 {len(papers)} 篇推荐 …")
+    print(f"推送今日推荐：{len(featured)} 篇精选 + {len(extra)} 篇扩展 …")
     return _send(title, content)
 
 
 def send_daily_recommendation(paper: dict, telegraph_url: str) -> bool:
-    """Legacy single-paper push — kept for backward compatibility."""
+    """Legacy single-paper push."""
     paper["telegraph_url"] = telegraph_url
     return send_daily_digest([paper])
 

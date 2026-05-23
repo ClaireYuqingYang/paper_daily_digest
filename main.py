@@ -31,10 +31,10 @@ from database import (
     upsert_paper,
 )
 from fetcher import fetch_recent_papers
-from recommender import pick_paper, pick_papers, top_papers_for_issue
+from recommender import pick_extra_papers, pick_paper, pick_papers, top_papers_for_issue
 from sender import send_daily_digest, send_new_issue_announcement
 from telegraph_publisher import publish_paper
-from translator import enrich_paper
+from translator import enrich_paper, enrich_title_only
 
 
 def main():
@@ -79,25 +79,35 @@ def main():
         print(f"   [{label}] {p['title'][:65]}…  ({p['journal_short']})")
     print()
 
-    # ── 4. Translate + write blog for each paper ───────────────────────────────
-    enriched = []
-    for paper in todays_papers:
-        print(f"Enriching: {paper['title'][:60]}…")
-        enriched.append(enrich_paper(paper))
+    # ── 4. Pick 5 extra "you might like" papers ───────────────────────────────
+    extra_papers = pick_extra_papers(unread, todays_papers, n=5)
+    print(f"📋 Extra picks: {len(extra_papers)} papers\n")
 
-    # ── 5. Publish each to Telegraph ──────────────────────────────────────────
-    for paper in enriched:
+    # ── 5. Full enrichment (translate abstract + blog) for featured 3 ─────────
+    enriched_featured = []
+    for paper in todays_papers:
+        print(f"Enriching featured: {paper['title'][:60]}…")
+        enriched_featured.append(enrich_paper(paper))
+
+    # ── 6. Title-only translation for extra 5 ─────────────────────────────────
+    enriched_extra = []
+    for paper in extra_papers:
+        print(f"Translating title: {paper['title'][:60]}…")
+        enriched_extra.append(enrich_title_only(paper))
+
+    # ── 7. Publish featured papers to Telegraph ────────────────────────────────
+    for paper in enriched_featured:
         telegraph_url = ""
         if not args.no_telegraph:
             telegraph_url = publish_paper(paper)
         paper["telegraph_url"] = telegraph_url
 
-    # ── 6. Push one bundled webhook message ────────────────────────────────────
+    # ── 8. Push one bundled message ────────────────────────────────────────────
     if not args.no_send:
-        send_daily_digest(enriched)
+        send_daily_digest(enriched_featured, enriched_extra)
 
-    # ── 7. Mark all as recommended ────────────────────────────────────────────
-    for paper in enriched:
+    # ── 9. Mark all as recommended ────────────────────────────────────────────
+    for paper in enriched_featured + enriched_extra:
         mark_recommended(paper["doi"], paper.get("telegraph_url", ""))
 
     print("\nDone! 🎉")

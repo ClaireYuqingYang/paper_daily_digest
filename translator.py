@@ -69,6 +69,31 @@ def write_blog_post(paper: dict, abstract_zh: str, client: anthropic.Anthropic) 
         return abstract_zh  # fallback to Chinese abstract
 
 
+def translate_title(title: str, client: anthropic.Anthropic) -> str:
+    """Translate a paper title to Chinese only."""
+    try:
+        msg = client.messages.create(
+            model=CLAUDE_MODEL,
+            max_tokens=100,
+            system="将以下学术论文标题翻译成中文，只输出翻译结果，不加任何解释。",
+            messages=[{"role": "user", "content": title}],
+        )
+        return msg.content[0].text.strip()
+    except Exception as exc:
+        print(f"  [WARN] Title translation failed: {exc}")
+        return title
+
+
+def enrich_title_only(paper: dict) -> dict:
+    """Only translate the title — no abstract translation, no blog post. Much cheaper."""
+    client = _client()
+    if client is None:
+        paper["title_zh"] = paper["title"]
+    else:
+        paper["title_zh"] = translate_title(paper["title"], client)
+    return paper
+
+
 def enrich_paper(paper: dict) -> dict:
     """
     Add 'abstract_zh' and 'blog_content' to the paper dict.
