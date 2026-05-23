@@ -1,0 +1,45 @@
+name: UTD Paper Daily Digest
+
+on:
+  schedule:
+    # 每天 12:00 UTC = 美东夏令时 08:00 (EDT, UTC-4)
+    # 注意：冬令时 (EST, UTC-5) 期间会变成 07:00 ET
+    - cron: "0 12 * * *"
+
+  workflow_dispatch:
+    inputs:
+      days:
+        description: "往前追溯几天（默认 1）"
+        required: false
+        default: "1"
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: Run daily digest
+        env:
+          ANTHROPIC_API_KEY:       ${{ secrets.ANTHROPIC_API_KEY }}
+          SERVERCHAN_KEY:          ${{ secrets.SERVERCHAN_KEY }}
+          TELEGRAPH_ACCESS_TOKEN:  ${{ secrets.TELEGRAPH_ACCESS_TOKEN }}
+        run: |
+          DAYS="${{ github.event.inputs.days || '1' }}"
+          python main.py --days $DAYS
+
+      - name: Save database as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: papers-db-${{ github.run_id }}
+          path: data/
+          retention-days: 90

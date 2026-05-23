@@ -1,0 +1,12 @@
+# 敏感文件 — 绝对不提交
+.env
+data/.telegraph_token
+
+# 数据库（本地运行产生，不纳入版本控制）
+data/
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store

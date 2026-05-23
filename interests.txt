@@ -1,0 +1,20 @@
+# 研究兴趣关键词（每行一个，随时可以修改）
+# 系统会优先推荐与这些关键词匹配的论文
+
+computational social science
+causal inference
+causal
+quasi-experiment
+difference in differences
+regression discontinuity
+instrumental variable
+quantitative marketing
+quant marketing
+structural model
+field experiment
+randomized experiment
+information systems
+platform
+digital
+online behavior
+social media
